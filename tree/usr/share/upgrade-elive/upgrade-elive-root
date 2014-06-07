@@ -4,26 +4,26 @@ guitool=zenity
 export TEXTDOMAIN="upgrade-elive"
 
 if [[ "$UID" != "0" ]] ; then
-   $guitool --error --text=$"This tool needs to be launched as root"
-   exit
+    $guitool --error --text=$"This tool needs to be launched as root"
+    exit
 fi
 
 if [[ -z "$1" ]] ; then
-   $guitool --error --text=$"You need to pass an argument to this tool ($0), the name of the ISO image with the complete path. No ISO filename found."
+    $guitool --error --text=$"You need to pass an argument to this tool ($0), the name of the ISO image with the complete path. No ISO filename found."
 fi
 
 isofile="$1"
 tempdir="/tmp/$(basename $0)_mountpoint_$$"
 
 if [[ -d $tempdir ]] ; then
-   $guitool --error --text="Directory $tempdir already exists, please remove it"
-   exit
+    $guitool --error --text="Directory $tempdir already exists, please remove it"
+    exit
 fi
 
-mkdir -p $tempdir 
+mkdir -p $tempdir
 if ! mount -o loop "$isofile" "$tempdir" ; then
-   $guitool --error --text="Failed mounting the ISO file in loop mode, have you verified the integrity with the MD5 or the signature ?"
-   exit
+    $guitool --error --text="Failed mounting the ISO file in loop mode, have you verified the integrity with the MD5 or the signature ?"
+    exit
 fi
 kernelfile="$( ls -1 ${tempdir}/boot/ | grep vmlinuz- | grep -v "sig$" | head -1 )"
 
@@ -34,20 +34,20 @@ rm -rf /upgrade
 mkdir -p /upgrade
 
 { sleep 2 ; echo 10 ; cp -a ${tempdir}/* /upgrade/ ; } | $guitool --progress --pulsate --auto-close
-cp /upgrade/boot/vmlinuz-* /boot/
-cp /upgrade/boot/initrd.img-* /boot/
+    cp /upgrade/boot/vmlinuz-* /boot/
+    cp /upgrade/boot/initrd.img-* /boot/
 
 
-umount "$tempdir"
-rmdir $tempdir
+    umount "$tempdir"
+    rmdir $tempdir
 
-vgavalue="$( grep "vga=" /boot/grub/menu.lst | grep "^kernel" | grep -i elive | tr ' ' '\n' | grep "vga=" | grep "[[:digit:]]" | head -1 )"
-vgavalue="${vgavalue##*=}"
-[[ -z "$vgavalue" ]] && vgavalue=normal
+    vgavalue="$( grep "vga=" /boot/grub/menu.lst | grep "^kernel" | grep -i elive | tr ' ' '\n' | grep "vga=" | grep "[[:digit:]]" | head -1 )"
+    vgavalue="${vgavalue##*=}"
+    [[ -z "$vgavalue" ]] && vgavalue=normal
 
-if ! grep "^title" /boot/grub/menu.lst | head -1 | grep -q "Upgrade Elive" ; then
-   /usr/share/nurse/lib/grub-aggregator.awk -v kernel_version="${kernelversion}" -v external_title="Upgrade Elive" -v extra_args="boot=eli quiet lang=${LANG%%_*} autoupgrade image_dir=upgrade/system resolution vga=$vgavalue" -v remove_root_device="yes" -v remove_resume="yes" /boot/grub/menu.lst > /boot/grub/menu.lst.new ; mv /boot/grub/menu.lst.new /boot/grub/menu.lst
-fi
+    if ! grep "^title" /boot/grub/menu.lst | head -1 | grep -q "Upgrade Elive" ; then
+        /usr/share/nurse/lib/grub-aggregator.awk -v kernel_version="${kernelversion}" -v external_title="Upgrade Elive" -v extra_args="boot=eli quiet lang=${LANG%%_*} autoupgrade image_dir=upgrade/system resolution vga=$vgavalue" -v remove_root_device="yes" -v remove_resume="yes" /boot/grub/menu.lst > /boot/grub/menu.lst.new ; mv /boot/grub/menu.lst.new /boot/grub/menu.lst
+    fi
 
-$guitool --info --text=$"Completed. You can reboot your computer now and start the upgrade process which is like a simple re-installation of Elive. Do not worry about your users and personal files, they are saved in the installation process"
+    $guitool --info --text=$"Completed. You can reboot your computer now and start the upgrade process which is like a simple re-installation of Elive. Do not worry about your users and personal files, they are saved in the installation process"
 

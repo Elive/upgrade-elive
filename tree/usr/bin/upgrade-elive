@@ -6,12 +6,12 @@ export TEXTDOMAIN="upgrade-elive"
 source /lib/elive-scripts/elive-functions.sh
 
 if [[ -d /elive ]] ; then
-   $guitool --error --text=$"It looks like you are trying to use this feature from the Live CD mode. This feature is only available after you install Elive to your computer."
-   exit 0
+    $guitool --error --text=$"It looks like you are trying to use this feature from the Live CD mode. This feature is only available after you install Elive to your computer."
+    exit 0
 fi
 
 if ! $guitool --question --text=$"This tool allows you to upgrade your Elive by doing a new install. It will boot a recent version of Elive without the need to burn a CD or use a USB stick. After you reboot your computer, you can enter into the Live CD mode and start the new installation as upgrade mode" ; then
-   exit
+    exit
 fi
 
 iceweasel http://www.elivecd.org &
@@ -21,17 +21,17 @@ $guitool --info --text=$"You need to download the version of Elive ISO image tha
 # FIXME: add a verifier of the ISO using the signature (no the md5, not needed), remember to update the previous message saying that is needed to download the ISO file too ^^ , do this for the stable release.  (continue to tag md5)
 
 sleep 1
-$guitool --info --text=$"Select the downloaded ISO image to proceed with the installation" 
+$guitool --info --text=$"Select the downloaded ISO image to proceed with the installation"
 
 isofile="$( $guitool --file-selection || echo cancel )"
 
 if ! check_result_guitool "$isofile" ; then
-   $guitool --error --text=$"You need to select the downloaded ISO image to proceed with the installation."
-   exit
+    $guitool --error --text=$"You need to select the downloaded ISO image to proceed with the installation."
+    exit
 fi
 
 if ! file "$isofile" | grep -iq "ISO 9660.*Elive.*bootable" ; then
-   $guitool --error --text=$"Problem found with the ISO image. It does not look like an Elive ISO image. If you are sure that it really is an Elive ISO image file, report the problem to:"" http://bugs.elivecd.org"
+    $guitool --error --text=$"Problem found with the ISO image. It does not look like an Elive ISO image. If you are sure that it really is an Elive ISO image file, report the problem to:"" http://bugs.elivecd.org"
 fi
 
 # tag md5
