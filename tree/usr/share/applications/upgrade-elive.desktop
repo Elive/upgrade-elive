@@ -68,4 +68,4 @@ GenericName[ar]=تثبيت نسخة جديدة من Elive
 Icon=logo-elive
 Exec=upgrade-elive
 Terminal=false
-Categories=ENLIGHTENMENT;System;Settings;
+Categories=Elive
