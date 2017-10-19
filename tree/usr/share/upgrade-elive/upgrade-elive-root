@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# XXX UPDATE for 3.0:
+# new GRUB required structure is like this (working) example:
+# - copy the kernel, initrd, and entire ISO to /upgrade/live/
+# grub custom example:
+# menuentry "Upgrade, installed OS is in sda5" {
+#   loopback loop (hd0.5)/upgrade/elive.iso
+#   linux (loop)/live/vmlinuz1 isofrom=/dev/sda5/upgrade/elive.iso  .... boot=live autoupgrade etc ...
+#   initrd (loop)/live/initrd1.img
+# }
+# notes: test installation worked (should have less questions, more automated, and not waiting so long for start), maybe also with a special profile with no elements in  the desktop or with an upgrade wallapepr)
+# TODO: test if works with encrypted partitions
+# TODO: installer should detect if we use the old kernel and similar things to configure correctly the boot of the live mode (blacklist nvidia, no-pae kernel, etc)
+
 guitool=zenity
 export TEXTDOMAIN="upgrade-elive"
 
